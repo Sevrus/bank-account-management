@@ -46,13 +46,15 @@ export default function TransactionForm({ monthId, envelopes }: Props) {
             <div className="grid">
                 <label>
                     Date
+                    <br />
                     <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                 </label>
 
                 <label>
                     Enveloppe
+                    <br />
                     <select
-                        value=""
+                        value={envelopeId}
                         onChange={(e) => setEnvelopeId(Number(e.target.value))}
                     >
                         {envelopes.map((env) => (
@@ -65,6 +67,7 @@ export default function TransactionForm({ monthId, envelopes }: Props) {
 
                 <label>
                     Montant (tu tapes “10” → -10€)
+                    <br />
                     <input
                         inputMode="decimal"
                         value={amount}
@@ -75,6 +78,7 @@ export default function TransactionForm({ monthId, envelopes }: Props) {
 
                 <label>
                     Libellé (optionnel)
+                    <br />
                     <input value={label} onChange={(e) => setLabel(e.target.value)} />
                 </label>
             </div>
