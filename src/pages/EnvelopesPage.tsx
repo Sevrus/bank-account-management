@@ -59,10 +59,12 @@ export default function EnvelopesPage() {
                 <div className="grid">
                     <label>
                         Nom
+                        <br />
                         <input value={name} onChange={(e) => setName(e.target.value)} />
                     </label>
                     <label>
                         Budget prévu (€)
+                        <br />
                         <input value={planned} onChange={(e) => setPlanned(e.target.value)} />
                     </label>
                 </div>
