@@ -26,10 +26,15 @@ export default function MonthDashboard() {
 
     const spentByEnvelope = useMemo(() => {
         const map = new Map<number, number>();
+
         for (const t of txs ?? []) {
-            // dépenses sont négatives => spent positif
-            if (t.amount < 0) map.set(t.envelopeId, (map.get(t.envelopeId) ?? 0) + Math.abs(t.amount));
+            const current = map.get(t.envelopeId) ?? 0;
+
+            const value = Math.abs(t.amount);
+
+            map.set(t.envelopeId, current + value);
         }
+
         return map;
     }, [txs]);
 
