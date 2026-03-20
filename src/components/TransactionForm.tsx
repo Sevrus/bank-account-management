@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { db, type Envelope, type MonthId } from "../db/db";
 import { getTodayISO } from "../db/seed";
 
+
 type Props = {
     monthId: MonthId;
     envelopes: Envelope[];
@@ -9,30 +10,33 @@ type Props = {
 
 export default function TransactionForm({ monthId, envelopes }: Props) {
     const [date, setDate] = useState(getTodayISO());
-    const [envelopeId, setEnvelopeId] = useState<number>(() => envelopes[0]?.id ?? 0);
+    const [envelopeId, setEnvelopeId] = useState<number>(0);
     const [amount, setAmount] = useState<string>("");
     const [label, setLabel] = useState("");
+    const selectedEnvelopeId = envelopeId !== 0 ? envelopeId : envelopes[0]?.id ?? 0;
 
     const canSubmit = useMemo(() => {
         const n = Number(amount);
-        return Boolean(date) && Number.isFinite(n) && n !== 0 && envelopeId > 0;
-        }, [date, amount, envelopeId]
+        return Boolean(date) && Number.isFinite(n) && n !== 0 && selectedEnvelopeId > 0;
+        }, [date, amount, selectedEnvelopeId]
     )
 
     async function submit() {
         if (!canSubmit) return;
 
-        //Convention: dépense = montant négatif
         const raw = Number(amount);
-        const normalized = raw < 0 ? -raw : raw;
+
+        if (!Number.isFinite(raw)) return;
+
+        const normalized = -Math.abs(raw);
 
         await db.transactions.add({
             monthId,
-            envelopeId,
+            envelopeId: selectedEnvelopeId,
             date,
             amount: normalized,
             label: label.trim() || undefined,
-            createdAt: Date.now()
+            createdAt: Date.now(),
         });
 
         setAmount("");
@@ -54,7 +58,7 @@ export default function TransactionForm({ monthId, envelopes }: Props) {
                     Enveloppe
                     <br />
                     <select
-                        value={envelopeId}
+                        value={selectedEnvelopeId || ""}
                         onChange={(e) => setEnvelopeId(Number(e.target.value))}
                     >
                         {envelopes.map((env) => (
